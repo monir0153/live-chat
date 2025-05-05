@@ -23,6 +23,10 @@ class MessageController extends Controller
 
         broadcast(new MessageEvent($data));
 
-        return back();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Message sent successfully!',
+            'data' => $data
+        ]);
     }
 }

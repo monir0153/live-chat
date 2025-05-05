@@ -28,7 +28,7 @@ class MessageEvent implements ShouldBroadcastNow
     {
         return [
             'id' => $this->data->id,
-            'message' => $this->data->content,
+            'content' => $this->data->content,
             'sender_id' => $this->data->sender_id,
             'receiver_id' => $this->data->receiver_id,
             'created_at' => $this->data->created_at,

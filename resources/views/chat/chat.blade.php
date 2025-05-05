@@ -21,7 +21,7 @@
         </div>
 
         <!-- User List -->
-        <div class="flex-1 overflow-y-auto">
+        <div class="flex-1 max-h-[70vh] overflow-y-auto">
             @foreach ($users as $user)
                 <div class="flex items-center p-3 border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
                     onclick="userShow({{ $user }})">
@@ -81,7 +81,7 @@
 
         <!-- Message Input -->
         <div class="p-3 border-t border-gray-200 bg-white">
-            <form action="{{ route('messages.send') }}" method="POST" class="flex items-center">
+            <form id="messageForm" action="{{ route('messages.send') }}" method="POST" class="flex items-center">
                 @csrf
                 <input type="hidden" id="reciverId" name="receiver_id" value="">
                 <button type="button" class="p-2 rounded-full hover:bg-gray-100">
@@ -104,34 +104,27 @@
     </div>
 </div>
 <script>
+    let messagesData = [];
+    let currentReceiverId = document.getElementById('receiverId')?.value;
+
     document.addEventListener('DOMContentLoaded', function() {
-        let messagesData = [];
-        let currentReceiverId = document.getElementById('receiverId')?.value;
+
         Echo.private('message.{{ Auth::id() }}')
             .listen('MessageEvent', (data) => {
-                console.log(data)
                 if (data.sender_id == currentReceiverId || data.receiver_id == currentReceiverId) {
                     messagesData.push(data);
+                    renderMessages();
                 }
             });
     });
 
-    function userShow(user) {
-        document.getElementById('user-name').innerText = user.name
-        document.getElementById('reciverId').value = user.id;
-        fetch(`messages/${user.id}`).then(response => response.json())
-            .then(data => {
-                if (data.status == true) {
-                    messagesData = data.messages;
-                    renderMessages();
-                }
-
-            });
-    }
-
     function renderMessages() {
         const messagesArea = document.getElementById('messagesArea');
         messagesArea.innerHTML = '';
+        if (messagesData.length === 0) {
+            messagesArea.innerHTML = '<p class="text-center">No messages yet.</p>';
+            return;
+        }
         messagesData.forEach(message => {
             let time = new Date(message.created_at);
             let options = {
@@ -143,16 +136,61 @@
                 second: '2-digit'
             };
             time = time.toLocaleString('en-US', options);
-            messagesArea.innerHTML += `<div class="flex ${message.sender_id == {{ Auth::id() }} ? 'justify-end' : ''} mb-4">
-                <div class="ml-3">
-                    <div class="${message.sender_id == {{ Auth::id() }} ? 'bg-blue-500 text-white' : 'bg-white'} p-3 rounded-lg rounded-tl-none shadow-sm max-w-xs lg:max-w-md">
-                        <p>${message.content}</p>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-1">${time}</p>
-                </div>
-            </div>`
 
+            messagesArea.innerHTML += `<div class="flex ${message.sender_id == {{ Auth::id() }} ? 'justify-end' : ''} mb-4">
+            <div class="ml-3">
+                <div class="${message.sender_id == {{ Auth::id() }} ? 'bg-blue-500 text-white' : 'bg-white'} p-3 rounded-lg rounded-tl-none shadow-sm max-w-xs lg:max-w-md">
+                    <p>${message.content}</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">${time}</p>
+            </div>
+        </div>`;
         });
         messagesArea.scrollTop = messagesArea.scrollHeight;
     }
+
+    function userShow(user) {
+        document.getElementById('user-name').innerText = user.name;
+        document.getElementById('reciverId').value = user.id;
+        currentReceiverId = user.id; // ✅ update currentReceiverId globally
+
+        fetch(`messages/${user.id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == true) {
+                    messagesData = data.messages;
+                    renderMessages();
+                }
+            });
+    }
+
+
+
+    document.getElementById('messageForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // prevent default form reload behavior
+
+        let form = e.target;
+        let formData = new FormData(form);
+
+        fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    form.reset();
+                    messagesData.push(data.data);
+                    renderMessages();
+                } else {
+                    console.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+            });
+    });
 </script>

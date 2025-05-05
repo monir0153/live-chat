@@ -11,8 +11,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $user = User::latest()->get();
-    return view('dashboard', ['users' => $user]);
+    $users = User::where('id', '!=', Auth::id())->latest()->get();
+    return view('dashboard', ['users' => $users]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -22,7 +22,8 @@ Route::middleware('auth')->group(function () {
 });
 Route::post('/messages/send', [MessageController::class, 'send'])->name('messages.send');
 Route::get('messages/{user_id}', function ($user_id) {
-    $data = Message::where('sender_id', $user_id)->orWhere('receiver_id', $user_id)
+    $data = Message::where('receiver_id', $user_id)->where('sender_id', Auth::id())
+        ->orWhere('receiver_id', Auth::id())->where('sender_id', $user_id)
         ->limit(50)->get();
     return response()->json([
         'status' => true,
