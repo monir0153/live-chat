@@ -1,0 +1,25 @@
+<!-- Incoming message -->
+<div class="flex mb-4">
+    <img src="https://i.pravatar.cc/300" alt="Sender" class="w-8 h-8 rounded-full mt-1">
+    <div class="ml-3">
+        <div class="bg-white p-3 rounded-lg rounded-tl-none shadow-sm max-w-xs lg:max-w-md">
+            <p>Hey there! How are you doing?</p>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">10:30 AM</p>
+    </div>
+</div>
+
+<!-- Outgoing message -->
+<div class="flex justify-end mb-4">
+    <div class="mr-3 text-right">
+        <div class="bg-blue-500 text-white p-3 rounded-lg rounded-tr-none shadow-sm max-w-xs lg:max-w-md">
+            <p>I'm doing great! Just working on this new chat app.</p>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">10:32 AM <svg class="inline ml-1 h-3 w-3 text-blue-500"
+                fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"></path>
+            </svg></p>
+    </div>
+</div>
