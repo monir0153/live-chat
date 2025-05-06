@@ -1,6 +1,5 @@
-# 📡 Real-Time Live Chat Application
+# 📡 Real-Time Live Chat Application with Laravel Reverb
 
-## Laravel with Laravel Reverb
 
 A sleek and responsive real-time live chat application built with **Laravel Reverb**, **Tailwind CSS**, and **Vanilla JavaScript**. This project showcases how to implement WebSocket-powered instant messaging without relying on external JS frameworks like Vue or React.
 
@@ -33,31 +32,45 @@ A sleek and responsive real-time live chat application built with **Laravel Reve
 
 ## 📦 Installation & Setup
 
+
+### 1️⃣ Clone the repository
 ```bash
-# 1️⃣ Clone the repository
 git clone https://github.com/monir0153/live-chat
 cd live-chat
+```
 
-# 2️⃣ Install dependencies
+### 2️⃣ Install dependencies
+```bash
 composer install or composer update
+```
+```bash
 npm install && npm run build
+```
 
-# 3️⃣ Set up environment variables
+### 3️⃣ Set up environment variables
+```bash
 cp .env.example .env
 php artisan key:generate
+```
 
-# 4️⃣ Configure broadcasting in .env
+### 4️⃣ Configure broadcasting in .env
+```bash
 BROADCAST_DRIVER=reverb
 REVERB_APP_KEY=your_app_key_here
 REVERB_PORT=6001
+```
 
-# 5️⃣ Run migrations
+### 5️⃣ Run migrations
+```bash
 php artisan migrate
-
-# 6️⃣ Start Laravel server
+```
+### 6️⃣ Start Laravel server
+```bash
 php artisan serve
 npm run dev
+```
 
-# 7️⃣ Start Reverb WebSocket server
+### 7️⃣ Start Reverb WebSocket server
+```bash
 php artisan reverb:start
 ```
