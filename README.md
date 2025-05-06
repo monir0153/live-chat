@@ -9,7 +9,6 @@ A sleek and responsive real-time live chat application built with **Laravel Reve
 ## 📸 Preview
 [Desktop-Screenshot-2025-05-06-19-15-18-36.png](https://postimg.cc/z3StyXzK)
 ![Chat Demo image](https://github.com/monir0153/live-chat/blob/main/public/ss.png)
-https://github.com/monir0153/live-chat/blob/main/public/ss.png
 
 ---
 
