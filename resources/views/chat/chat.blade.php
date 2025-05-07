@@ -27,12 +27,13 @@
                     onclick="userShow({{ $user }})">
                     <div class="relative">
                         <img src="https://i.pravatar.cc/300" alt="{{ $user->name }}" class="w-10 h-10 rounded-full">
-                        <span
-                            class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-gray-500 rounded-full border-2 border-white"
+                            id="user-{{ $user->id }}"></span>
                     </div>
                     <div class="ml-3">
                         <h3 class="text-sm font-medium">{{ $user->name }}</h3>
-                        <p class="text-xs text-gray-500 truncate max-w-xs">Last message preview...</p>
+                        <p class="text-xs text-gray-500 truncate max-w-xs user-status-{{ $user->id }}">last preview
+                        </p>
                     </div>
                     <div class="ml-auto text-xs text-gray-500">2 min</div>
                 </div>
@@ -109,6 +110,31 @@
 
     document.addEventListener('DOMContentLoaded', function() {
 
+        Echo.join('online')
+            .here((users) => {
+                console.log('here', users);
+                users.forEach(user => {
+                    let userId = document.getElementById(`user-${user.id}`)
+                    userId?.classList.remove('bg-gray-500');
+                    userId?.classList.add('bg-green-500');
+                });
+            })
+            .joining((user) => {
+                console.log('joining', user)
+                let userId = document.getElementById(`user-${user.id}`)
+                userId?.classList.remove('bg-gray-500');
+                userId?.classList.add('bg-green-500');
+            })
+            .leaving((user) => {
+                console.log('leaving', user);
+                let userId = document.getElementById(`user-${user.id}`)
+                userId?.classList.remove('bg-green-500');
+                userId?.classList.add('bg-gray-500');
+            })
+            .listen('UseronlineEvent', (data) => {
+                console.log(data)
+            })
+
         Echo.private('message.{{ Auth::id() }}')
             .listen('MessageEvent', (data) => {
                 if (data.sender_id == currentReceiverId || data.receiver_id == currentReceiverId) {
@@ -152,7 +178,7 @@
     function userShow(user) {
         document.getElementById('user-name').innerText = user.name;
         document.getElementById('reciverId').value = user.id;
-        currentReceiverId = user.id; // ✅ update currentReceiverId globally
+        currentReceiverId = user.id;
 
         fetch(`messages/${user.id}`)
             .then(response => response.json())
