@@ -32,10 +32,10 @@
                     </div>
                     <div class="ml-3">
                         <h3 class="text-sm font-medium">{{ $user->name }}</h3>
-                        <p class="text-xs text-gray-500 truncate max-w-xs user-status-{{ $user->id }}">last preview
+                        <p class="text-xs text-gray-500 truncate max-w-xs user-status-{{ $user->id }}">offline
                         </p>
                     </div>
-                    <div class="ml-auto text-xs text-gray-500">2 min</div>
+                    {{-- <div class="ml-auto text-xs text-gray-500">2 min</div> --}}
                 </div>
             @endforeach
         </div>
@@ -45,10 +45,10 @@
     <div class="flex-1 flex flex-col">
         <!-- Top Bar - User Info -->
         <div class="p-4 border-b border-gray-200 bg-white flex items-center">
-            <img src="https://i.pravatar.cc/300" alt="Current chat user" class="w-10 h-10 rounded-full">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg" alt="Current chat user" class="w-10 h-10 rounded-full"
+                id="user-avatar">
             <div class="ml-3">
-                <h3 class="font-medium" id="user-name">John Doe</h3>
-                <p class="text-xs text-gray-500">Online</p>
+                <h3 class="font-medium" id="user-name">Select a user</h3>
             </div>
             <div class="ml-auto flex space-x-2">
                 <button class="p-2 rounded-full hover:bg-gray-100">
@@ -117,6 +117,13 @@
                     let userId = document.getElementById(`user-${user.id}`)
                     userId?.classList.remove('bg-gray-500');
                     userId?.classList.add('bg-green-500');
+                    const statusElement = document.querySelector(`.user-status-${user.id}`);
+                    if (statusElement) {
+                        statusElement.textContent = "online";
+                        statusElement.classList.add('text-green-500');
+                        statusElement.classList.remove('text-gray-500');
+                    }
+
                 });
             })
             .joining((user) => {
@@ -124,12 +131,25 @@
                 let userId = document.getElementById(`user-${user.id}`)
                 userId?.classList.remove('bg-gray-500');
                 userId?.classList.add('bg-green-500');
+                const statusElement = document.querySelector(`.user-status-${user.id}`);
+                if (statusElement) {
+                    statusElement.textContent = "online";
+                    statusElement.classList.add('text-green-500');
+                    statusElement.classList.remove('text-gray-500');
+                }
+
             })
             .leaving((user) => {
                 console.log('leaving', user);
                 let userId = document.getElementById(`user-${user.id}`)
                 userId?.classList.remove('bg-green-500');
                 userId?.classList.add('bg-gray-500');
+                const statusElement = document.querySelector(`.user-status-${user.id}`);
+                if (statusElement) {
+                    statusElement.textContent = "leaved";
+                    statusElement.classList.add('text-gray-500');
+                    statusElement.classList.remove('text-green-500');
+                }
             })
             .listen('UseronlineEvent', (data) => {
                 console.log(data)
@@ -177,7 +197,8 @@
 
     function userShow(user) {
         document.getElementById('user-name').innerText = user.name;
-        document.getElementById('reciverId').value = user.id;
+        document.getElementById('user-avatar').src = user.avatar || 'https://i.pravatar.cc/300';
+
         currentReceiverId = user.id;
 
         fetch(`messages/${user.id}`)
