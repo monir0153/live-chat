@@ -198,7 +198,7 @@
     function userShow(user) {
         document.getElementById('user-name').innerText = user.name;
         document.getElementById('user-avatar').src = user.avatar || 'https://i.pravatar.cc/300';
-
+        document.getElementById('reciverId').value = user.id;
         currentReceiverId = user.id;
 
         fetch(`messages/${user.id}`)
@@ -216,9 +216,8 @@
     document.getElementById('messageForm').addEventListener('submit', function(e) {
         e.preventDefault(); // prevent default form reload behavior
 
-        let form = e.target;
+        let form = e.target; 
         let formData = new FormData(form);
-
         fetch(form.action, {
                 method: 'POST',
                 headers: {
