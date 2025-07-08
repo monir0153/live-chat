@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
@@ -13,4 +14,8 @@ Broadcast::channel('message.{id}', function ($id) {
         return false;
     }
     return true;
+});
+
+Broadcast::channel('online', function ($user) {
+    return $user;
 });
